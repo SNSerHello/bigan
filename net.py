@@ -50,7 +50,9 @@ class Output(object):
                     pass
         if shape is not None:
             for s in list(shape) + ([] if (index_max is None) else [index_max]):
-                assert isinstance(s, int)
+                assert isinstance(s, (int, np.int64)), "Unknown type: {}".format(
+                    type(s)
+                )
                 assert s >= 0
             shape = tuple(shape)
             assert len(shape) == value.ndim
