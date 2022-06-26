@@ -3,22 +3,25 @@ from sklearn import utils as skutils
 
 from rng import np_rng, py_rng
 
+
 def center_crop(x, ph, pw=None):
     if pw is None:
         pw = ph
     h, w = x.shape[:2]
-    j = int(round((h - ph)/2.))
-    i = int(round((w - pw)/2.))
-    return x[j:j+ph, i:i+pw]
+    j = int(round((h - ph) / 2.0))
+    i = int(round((w - pw) / 2.0))
+    return x[j : j + ph, i : i + pw]
+
 
 def patch(x, ph, pw=None):
     if pw is None:
         pw = ph
     h, w = x.shape[:2]
-    j = py_rng.randint(0, h-ph)
-    i = py_rng.randint(0, w-pw)
-    x = x[j:j+ph, i:i+pw]
+    j = py_rng.randint(0, h - ph)
+    i = py_rng.randint(0, w - pw)
+    x = x[j : j + ph, i : i + pw]
     return x
+
 
 def list_shuffle(*data):
     idxs = np_rng.permutation(np.arange(len(data[0])))
@@ -27,22 +30,25 @@ def list_shuffle(*data):
     else:
         return [[d[idx] for idx in idxs] for d in data]
 
+
 def shuffle(*arrays, **options):
     if isinstance(arrays[0][0], basestring):
         return list_shuffle(*arrays)
     else:
         return skutils.shuffle(*arrays, random_state=np_rng)
 
-def OneHot(X, n=None, negative_class=0.):
+
+def OneHot(X, n=None, negative_class=0.0):
     X = np.asarray(X).flatten()
     if n is None:
         n = np.max(X) + 1
     Xoh = np.ones((len(X), n)) * negative_class
-    Xoh[np.arange(len(X)), X] = 1.
+    Xoh[np.arange(len(X)), X] = 1.0
     return Xoh
 
+
 def iter_data(*data, **kwargs):
-    size = kwargs.get('size', 128)
+    size = kwargs.get("size", 128)
     try:
         n = len(data[0])
     except:

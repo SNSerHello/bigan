@@ -6,38 +6,71 @@ import theano.tensor as T
 
 from net import L, Net, Output, get_convnet, get_deconvnet
 
+
 class LearningModule(object):
-    modes = frozenset(('train', 'test'))
+    modes = frozenset(("train", "test"))
+
     def set_mode(self, mode):
         if mode not in self.modes:
-            raise ValueError('Unknown mode %s; should be in: %s'
-                             % (mode, self.modes))
+            raise ValueError("Unknown mode %s; should be in: %s" % (mode, self.modes))
         self.mode = mode
 
+
 class Generator(LearningModule):
-    def __init__(self, args, dist, nc, z=None, source=None, mode='train',
-                 bnkwargs={}, gen_transform=None):
-        N = self.net = Net(source=source, name='Generator')
+    def __init__(
+        self,
+        args,
+        dist,
+        nc,
+        z=None,
+        source=None,
+        mode="train",
+        bnkwargs={},
+        gen_transform=None,
+    ):
+        N = self.net = Net(source=source, name="Generator")
         self.set_mode(mode)
         h_and_weights = dist.embed_data()
-        bn_use_ave = (mode == 'test')
-        self.data, _ = get_deconvnet(image_size=args.crop_resize,
-                                     name=args.gen_net)(h_and_weights, N=N,
-            nout=nc, size=args.gen_net_size, num_fc=args.net_fc,
-            fc_dims=args.net_fc_dims, nonlin=args.deconv_nonlin,
-            bn_use_ave=bn_use_ave, ksize=args.deconv_ksize, **bnkwargs)
+        bn_use_ave = mode == "test"
+        self.data, _ = get_deconvnet(image_size=args.crop_resize, name=args.gen_net)(
+            h_and_weights,
+            N=N,
+            nout=nc,
+            size=args.gen_net_size,
+            num_fc=args.net_fc,
+            fc_dims=args.net_fc_dims,
+            nonlin=args.deconv_nonlin,
+            bn_use_ave=bn_use_ave,
+            ksize=args.deconv_ksize,
+            **bnkwargs
+        )
         if gen_transform is not None:
-            self.data = Output(gen_transform(self.data.value),
-                               shape=self.data.shape)
+            self.data = Output(gen_transform(self.data.value), shape=self.data.shape)
+
 
 class Featurizer(LearningModule):
-    def __init__(self, args, dist, X, gX, Y,
-                 nc=3, ny=None, mode='train', bnkwargs={},
-                 discrim_weight=0, encode_weight=0,
-                 joint_discrim_weight=0, updater=None,
-                 net_name=None, net_size=None,
-                 extra_cond_real=None, extra_cond_gen=None,
-                 is_discrim=False, name='Featurizer'):
+    def __init__(
+        self,
+        args,
+        dist,
+        X,
+        gX,
+        Y,
+        nc=3,
+        ny=None,
+        mode="train",
+        bnkwargs={},
+        discrim_weight=0,
+        encode_weight=0,
+        joint_discrim_weight=0,
+        updater=None,
+        net_name=None,
+        net_size=None,
+        extra_cond_real=None,
+        extra_cond_gen=None,
+        is_discrim=False,
+        name="Featurizer",
+    ):
         self.X = X
         self.gX = gX
         self.Y = Y
@@ -55,8 +88,9 @@ class Featurizer(LearningModule):
         self.cond_gen = extra_cond_gen
         assert (self.cond_real is None) == (self.cond_gen is None)
         self.cond = self.cond_real is not None
-        assert ((self.cond_real is None) and (self.cond_gen is None)) or \
-               len(self.cond_real) == len(self.cond_gen)
+        assert ((self.cond_real is None) and (self.cond_gen is None)) or len(
+            self.cond_real
+        ) == len(self.cond_gen)
         self.do_encode = bool(encode_weight or joint_discrim_weight)
         self.is_discrim = is_discrim
         if args.cat_inputs and not any(a is None for a in (self.X, self.gX)):
@@ -64,16 +98,19 @@ class Featurizer(LearningModule):
             if self.cond:
                 weights = self.cond_real[1]
                 assert weights == self.cond_gen[1]
-                cond_cat = [L.Concat(zr, zg, axis=0) for zr, zg in
-                            zip(self.cond_real[0], self.cond_gen[0])], weights
+                cond_cat = [
+                    L.Concat(zr, zg, axis=0)
+                    for zr, zg in zip(self.cond_real[0], self.cond_gen[0])
+                ], weights
             else:
                 cond_cat = None
             h_cat = self.feats(data_cat, cond=cond_cat)
-            h_real, h_gen = L.Slice(h_cat, slice_point=[self.X.value.shape[0]],
-                                    axis=0)
+            h_real, h_gen = L.Slice(h_cat, slice_point=[self.X.value.shape[0]], axis=0)
         else:
-            h_real, h_gen = (None if (x is None) else self.feats(x, cond=c)
-                for x, c in [(self.X, self.cond_real), (self.gX, self.cond_gen)])
+            h_real, h_gen = (
+                None if (x is None) else self.feats(x, cond=c)
+                for x, c in [(self.X, self.cond_real), (self.gX, self.cond_gen)]
+            )
         assert self.net is not None
         self.h_real, self.h_gen = h_real, h_gen
         if args.classifier and h_real is not None:
@@ -91,20 +128,25 @@ class Featurizer(LearningModule):
         if discrim_weight:
             self.add_discrim_loss(h_real, h_gen, weight=discrim_weight)
         if self.do_encode:
-            self.encoder = encoder = Encoder(self.net, args, dist, self.Y,
-                X=self.X, updater=updater,
-                featurizer=self, bias=args.encode_out_bias)
+            self.encoder = encoder = Encoder(
+                self.net,
+                args,
+                dist,
+                self.Y,
+                X=self.X,
+                updater=updater,
+                featurizer=self,
+                bias=args.encode_out_bias,
+            )
             encoder.gen_cost = g = encoder.real_loss(self.h_real)
             encoder.real_cost = r = encoder.gen_loss(self.h_gen)
             cost_terms = [x.mean() for x in [g, r] if x is not None]
             if cost_terms:
                 encoder.cost = sum(cost_terms)
                 if encoder.real_cost is not None:
-                    self.net.add_loss(encoder.real_cost,
-                        weight=1, name='loss_real')
+                    self.net.add_loss(encoder.real_cost, weight=1, name="loss_real")
                 if encoder.gen_cost is not None:
-                    self.net.add_loss(encoder.gen_cost,
-                        weight=1, name='loss_gen')
+                    self.net.add_loss(encoder.gen_cost, weight=1, name="loss_gen")
             else:
                 encoder.cost = None
 
@@ -119,27 +161,31 @@ class Featurizer(LearningModule):
         else:
             N = Net(source=self.net, name=self.name)
         assert isinstance(image, Output)
-        fc_drop = 0 if (self.mode == 'test') else (
-            args.encode_net_fc_drop if
-            (self.do_encode and (args.encode_net_fc_drop is not None))
-            else args.net_fc_drop
+        fc_drop = (
+            0
+            if (self.mode == "test")
+            else (
+                args.encode_net_fc_drop
+                if (self.do_encode and (args.encode_net_fc_drop is not None))
+                else args.net_fc_drop
+            )
         )
         fc_dims = (
-            args.encode_net_fc_dims if
-            (self.do_encode and (args.encode_net_fc_dims is not None))
+            args.encode_net_fc_dims
+            if (self.do_encode and (args.encode_net_fc_dims is not None))
             else args.net_fc_dims
         )
         num_fc = (
-            args.encode_net_fc if
-            (self.do_encode and (args.encode_net_fc is not None))
+            args.encode_net_fc
+            if (self.do_encode and (args.encode_net_fc is not None))
             else args.net_fc
         )
         nonlin = (
-            args.encode_nonlin if
-            (self.do_encode and (args.encode_nonlin is not None))
+            args.encode_nonlin
+            if (self.do_encode and (args.encode_nonlin is not None))
             else args.conv_nonlin
         )
-        bn_use_ave = (self.mode == 'test')
+        bn_use_ave = self.mode == "test"
         net = get_convnet(image_size=args.crop_resize, name=self.net_name)
         kwargs = {}
         kwargs.update(self.bnkwargs)
@@ -159,32 +205,45 @@ class Featurizer(LearningModule):
             size = args.feat_net_size
         else:
             size = self.net_size
-        f, _ = net(image, cond=cond, N=N, size=size,
-                   num_fc=num_fc, fc_dims=fc_dims, fc_drop=fc_drop,
-                   nonlin=nonlin, bn_use_ave=bn_use_ave,
-                   bn_separate=args.bn_separate, **kwargs)
+        f, _ = net(
+            image,
+            cond=cond,
+            N=N,
+            size=size,
+            num_fc=num_fc,
+            fc_dims=fc_dims,
+            fc_drop=fc_drop,
+            nonlin=nonlin,
+            bn_use_ave=bn_use_ave,
+            bn_separate=args.bn_separate,
+            **kwargs
+        )
         self._feats[key] = f
         return f
 
-    def add_discrim_loss(self, h_real, h_gen, weight=1, name='discrim'):
+    def add_discrim_loss(self, h_real, h_gen, weight=1, name="discrim"):
         discrim = {}
         assert not hasattr(self, name)
         setattr(self, name, discrim)
-        discrim['discrim'] = d = BinaryClassifier(self.net)
-        def add_discrim_cost(h_y, prefix=''):
-            key = '%sloss' % prefix
+        discrim["discrim"] = d = BinaryClassifier(self.net)
+
+        def add_discrim_cost(h_y, prefix=""):
+            key = "%sloss" % prefix
             cost = {}
             for name, h, y in h_y:
-                if h is None: continue
+                if h is None:
+                    continue
                 loss = d.loss(h, y)
-                loss_name = '%s_%s' % (key, name)
+                loss_name = "%s_%s" % (key, name)
                 self.net.add_loss(loss, name=loss_name)
-                self.net.add_agg_loss_term(loss_name, weight=weight/2, name=key)
-        h_y = ('real', h_real, 1), ('gen', h_gen, 0)
+                self.net.add_agg_loss_term(loss_name, weight=weight / 2, name=key)
+
+        h_y = ("real", h_real, 1), ("gen", h_gen, 0)
         add_discrim_cost(h_y)
         h_y_not = ((n, h, 1 - y) for n, h, y in h_y)
-        add_discrim_cost(h_y_not, prefix='opp_')
+        add_discrim_cost(h_y_not, prefix="opp_")
         return discrim
+
 
 class LinearPredictor(LearningModule):
     def __init__(self, N, nout, stddev=0, bias=False):
@@ -231,9 +290,11 @@ class LinearPredictor(LearningModule):
         self._preds[key] = preds
         return preds
 
+
 class Encoder(LinearPredictor):
-    def __init__(self, N, args, dist, y, X=None, updater=None,
-                 featurizer=None, bias=False):
+    def __init__(
+        self, N, args, dist, y, X=None, updater=None, featurizer=None, bias=False
+    ):
         self.N = N
         self.args = args
         self.dist = dist
@@ -279,6 +340,7 @@ class Encoder(LinearPredictor):
             error = self.dist_recon_error(gen_feats)
         return error
 
+
 class MultilabelClassifier(LinearPredictor):
     def __init__(self, N, num_labels):
         super(MultilabelClassifier, self).__init__(N, nout=num_labels)
@@ -293,6 +355,7 @@ class MultilabelClassifier(LinearPredictor):
     def loss(self, feats, label):
         probs = self.probs(feats)
         return T.nnet.categorical_crossentropy(probs, label.value)
+
 
 class BinaryClassifier(LinearPredictor):
     def __init__(self, N):
