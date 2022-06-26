@@ -487,8 +487,10 @@ class FC(Layer):
         if out_shape_specified:
             out_shape = nout
         else:
-            assert isinstance(nout, int)
-            out_shape = (nout,)
+            assert isinstance(nout, (int, np.int64)), "Unknown type: {}".format(
+                type(nout)
+            )
+            out_shape = (int(nout),)
         nout = np.prod(out_shape)
         nin_axis = [0]
         W = self.weights(
