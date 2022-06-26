@@ -765,10 +765,10 @@ class Net(object):
         self.source_params = source._params if self.reuse else None
 
     def params(self):
-        return [p for p, _ in self._params.itervalues()]
+        return [p for p, _ in self._params.values()]
 
     def learnables(self):
-        return [p for p, l in self._params.itervalues() if l]
+        return [p for p, l in self._params.values() if l]
 
     def learnable_keys(self):
         return [k for k, (_, l) in self._params.items() if l]
