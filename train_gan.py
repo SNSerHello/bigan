@@ -733,7 +733,7 @@ deploy_updates = []
 for n in nets:
     deploy_updates.extend(n.get_deploy_updates())
 _deploy_update = lazy_function(
-    deploy_inputs, disp_costs.values(), updates=deploy_updates
+    deploy_inputs, list(disp_costs.values()), updates=deploy_updates
 )
 update_both = (not args.no_update_both) and (args.k == 1)
 niter = args.epochs  # # of iter at starting learning rate
@@ -754,7 +754,7 @@ else:
 _gen_train = lazy_function(Z, gX.value)
 set_mode("test")
 _gen = lazy_function(Z, gXtest.value)
-_cost = lazy_function(inputs, disp_costs.values(), on_unused_input="ignore")
+_cost = lazy_function(inputs, list(disp_costs.values()), on_unused_input="ignore")
 if args.encode:
     enc_feats = f_encoder.feats(X)
     enc_preds = f_encoder.encoder.preds(enc_feats).value
