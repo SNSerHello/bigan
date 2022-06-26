@@ -6,7 +6,7 @@ import itertools
 from matplotlib import pyplot as plt
 import numpy as np
 import os
-from sklearn.externals import joblib
+import joblib
 from time import time
 
 import theano

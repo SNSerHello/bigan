@@ -2,7 +2,7 @@ from __future__ import division
 
 import caffe
 import numpy as np
-from sklearn.externals import joblib
+import joblib
 
 BN_EPS = 1e-8
 
