@@ -1,6 +1,7 @@
 from __future__ import division
 
 import itertools
+import functools
 from operator import itemgetter
 
 import numpy as np
@@ -311,7 +312,7 @@ class MultiDistribution(Distribution):
                     bp = [bp]
                 return a + bp
 
-            self.placeholders = reduce(cat_placeholders, self.dists, [])
+            self.placeholders = functools.reduce(cat_placeholders, self.dists, [])
 
         if weights is None:
             weights = [1] * len(self.dists)
