@@ -590,7 +590,7 @@ class BatchNorm(Layer):
 
         h, h_shape = h.value, h.shape
         assert h.ndim >= 1
-        axes = [0] + range(2, h.ndim)
+        axes = [0] + list(range(2, h.ndim))
         count = self.bn_count()
         if not use_ave:
             move_ave_update(count, 1)
