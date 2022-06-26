@@ -41,13 +41,13 @@ def cv_reg_lr(trX, trY, vaX, vaY, Cs=[0.01, 0.05, 0.1, 0.5, 1., 5., 10., 50., 10
         tr_acc = metrics.accuracy_score(trY, tr_pred)
         va_acc = metrics.accuracy_score(vaY, va_pred)
         if not return_score:
-            print '%.4f %.4f %.4f'%(C, tr_acc, va_acc)
+            print('%.4f %.4f %.4f'%(C, tr_acc, va_acc))
         tr_accs.append(tr_acc)
         va_accs.append(va_acc)
         models.append(model)
     best = np.argmax(va_accs)
     if return_score: return 100*va_accs[best]
-    print 'best model C: %.4f tr_acc: %.4f va_acc: %.4f'%(Cs[best], tr_accs[best], va_accs[best])
+    print('best model C: %.4f tr_acc: %.4f va_acc: %.4f'%(Cs[best], tr_accs[best], va_accs[best]))
     return models[best]
 
 def gpu_nnc_predict(trX, trY, teX, metric='cosine', batch_size=4096):

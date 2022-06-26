@@ -81,16 +81,16 @@ def transplant_weights(weights, caffenet, flip_filters=True, reverse_3ch=True):
         caffe_weights = check_caffe_weights(caffe_weights)
         group = theano_weights = check_theano_weights(theano_weights)
         if len(theano_weights) > 1 and len(caffe_weights) == 1:
-            print ('Layer "%s" did not match: '
-                   'Theano had bias; Caffe layer had only weights') % name
+            print(('Layer "%s" did not match: '
+                   'Theano had bias; Caffe layer had only weights') % name)
             mismatched = name
             break
         weights = caffe_weights['weight'][0]
         source_weights = group['weight'][0]
         if tuple(weights.shape) != source_weights.shape:
-            print ('Layer "%s" did not match: '
+            print(('Layer "%s" did not match: '
                    'weight.shape = %s != %s = source_weight.shape') \
-                   % (name, tuple(weights.shape), source_weights.shape)
+                   % (name, tuple(weights.shape), source_weights.shape))
             mismatched = name
             break
         source_params = caffenet.params[name]
@@ -109,27 +109,27 @@ def transplant_weights(weights, caffenet, flip_filters=True, reverse_3ch=True):
             scale /= stdev
             shift -= mean
             shift /= stdev
-            print "Merging BN into conv:", name
+            print("Merging BN into conv:", name)
         if 'scale' in group:
             assert len(group['scale']) == 1
             scale_param = group['scale'][0].copy()
             scale *= scale_param
             shift *= scale_param
-            print "Merging scale into conv:", name
+            print("Merging scale into conv:", name)
         if 'shift' in group:
             assert len(group['shift']) == 1
             shift += group['shift'][0].copy()
-            print "Merging shift into conv:", name
+            print("Merging shift into conv:", name)
         if isinstance(scale, np.ndarray):
             weights.data[...] = (source_weights.T * scale).T
         else:
-            print "Directly transplanting weights: %s" % name
+            print("Directly transplanting weights: %s" % name)
             assert scale == 1
             weights.data[...] = source_weights[...]
         if flip_filters and len(weights.shape) == 4:
             weights.data[...] = weights.data[:, :, ::-1, ::-1]
         if reverse_3ch and weights.shape[1] == 3:
-            print 'Reversing 3 channel inputs for weights:', name
+            print('Reversing 3 channel inputs for weights:', name)
             weights.data[...] = weights.data[:, ::-1]
         if isinstance(shift, np.ndarray):
             assert 'shift' in caffe_weights, 'need bias'
@@ -137,15 +137,15 @@ def transplant_weights(weights, caffenet, flip_filters=True, reverse_3ch=True):
             assert shift.shape == tuple(bias.shape)
             bias.data[...] = shift[...]
             if reverse_3ch and bias.data.shape[0] == 3:
-                print 'Reversing 3 channel output biases:', name
+                print('Reversing 3 channel output biases:', name)
                 bias.data[...] = bias.data[::-1]
         elif 'shift' in caffe_weights:
-            print "Zero initializing biases: %s" % name
+            print("Zero initializing biases: %s" % name)
             caffe_weights['shift'][0].data[...] = 0
         num_layers += 1
-    print 'Transplanted weights of %d layers' % num_layers
+    print('Transplanted weights of %d layers' % num_layers)
     if mismatched is not None:
-        print 'Warning: mismatch starting at layer:', mismatched
+        print('Warning: mismatch starting at layer:', mismatched)
 
 if __name__ == '__main__':
     import argparse
@@ -159,5 +159,5 @@ if __name__ == '__main__':
     weights = load_weights(args.weights)
     caffenet = get_caffenet(args.model)
     transplant_weights(weights, caffenet)
-    print 'Saving transplanted caffenet to:', args.output
+    print('Saving transplanted caffenet to:', args.output)
     caffenet.save(args.output)

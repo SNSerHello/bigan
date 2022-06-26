@@ -116,14 +116,14 @@ class ImageDataProvider(DataProvider):
             assert len(labels) > 0
             labels = list(label_set)
             labels.sort()
-            print 'Keeping %d labels: %s' % (len(labels), labels)
+            print('Keeping %d labels: %s' % (len(labels), labels))
             # remap the N labels to the 0:(N-1) range
             label_to_index = {l: i for i, l in enumerate(labels)}
             data = [(image, label_to_index[l]) for image, l in data
                      if l in label_set]
         if (max_images is not None) and (len(data) > max_images):
-            print 'Shrinking dataset from %d images to %d images' % \
-                (len(data), max_images)
+            print('Shrinking dataset from %d images to %d images' % \
+                (len(data), max_images))
             data = list_shuffle(data)
             data = data[:max_images]
         self.__dict__.update({k: v for k, v in locals().iteritems()
@@ -423,10 +423,10 @@ class Dataset(object):
             presized_root = root + str(args.raw_size)
             if args.raw_size and os.path.exists(presized_root):
                 root = presized_root
-                print 'Using pre-sized data: %s' % root
+                print('Using pre-sized data: %s' % root)
             else:
-                print 'Pre-sized data not found (%s); using original data: %s' % \
-                    (presized_root, root)
+                print('Pre-sized data not found (%s); using original data: %s' % \
+                    (presized_root, root))
             if args.include_labels:
                 labels = list(set([int(l)
                                    for l in args.include_labels.split(',') if l]))
@@ -435,9 +435,9 @@ class Dataset(object):
                 max_labels = args.max_labels
                 args.max_labels = None
                 if len(labels) > max_labels:
-                    print ('Warning: both --max_labels and --include_labels '
+                    print(('Warning: both --max_labels and --include_labels '
                            'specified and len(include_labels)=%d > max_labels=%d; '
-                           'truncating labels') % (len(labels), max_labels)
+                           'truncating labels') % (len(labels), max_labels))
                     labels = labels[:max_labels]
             self.nc = 3
             if args.max_labels:

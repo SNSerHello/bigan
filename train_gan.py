@@ -216,7 +216,7 @@ parser.add_argument('--weights',
     help='Weights filename prefix (e.g., * in *_discrim_params.jl)')
 
 args = parser.parse_args()
-print 'Args: %s' % args
+print('Args: %s' % args)
 
 args.net_fc_dims = [int(d) for d in args.net_fc_dims.split(',') if d]
 if args.encode_net_fc_dims is not None:
@@ -463,7 +463,7 @@ if args.encode:
             train_gen.net.add_loss(net.get_loss(),
                                    weight=args.encode_gen_weight)
         except KeyError:
-            print 'Warning: encoder had no separate loss to contribute to gen'
+            print('Warning: encoder had no separate loss to contribute to gen')
         encode_gen_params = net.learnables()
         for k in net.learnable_keys():
             # mark all params unlearnable -- will be learned by gen
@@ -622,21 +622,21 @@ megabatch_size = min(max_images_per_megabatch,
     int(max_memory_per_megabatch / float(image_bytes)))
 
 num_val = args.num_val_megabatch * megabatch_size
-print 'Getting %d val data' % num_val
+print('Getting %d val data' % num_val)
 vaXImages, vaY = dataset.val_provider.get_data(num_val)
 if len(vaXImages) > 1:
     vaXBigImages, vaXImages = vaXImages
 else:
     vaXBigImages = vaXImages = vaXImages[0]
 num_train = args.num_train_megabatch * megabatch_size
-print 'Getting %d train data' % num_train
+print('Getting %d train data' % num_train)
 trXImages, trY = dataset.train_provider.get_data(num_train)
 if len(trXImages) > 1:
     trXBigImages, trXImages = trXImages
 else:
     trXBigImages = trXImages = trXImages[0]
 
-print 'Getting samples'
+print('Getting samples')
 grid_shape = ny, dataset.num_vis_samples
 tr_idxs = np.arange(len(trY))
 sample_inds = [py_rng.sample(tr_idxs[trY==y], dataset.num_vis_samples)
@@ -653,7 +653,7 @@ else:
                                for y in xrange(ny)]).reshape(-1, nc, crop, crop)
     trXBigVis = inverse_transform(transform(trXBigVisRaw, crop=crop), crop=crop)
     dataset.grid_vis(trXBigVis, grid_shape, '%s/real_big.png' % (samples_dir,))
-print 'Done. Training...'
+print('Done. Training...')
 
 def flat(X):
     return X.reshape(len(X), -1)
@@ -681,7 +681,7 @@ def eval_and_disp(epoch, costs, ng=(10 * megabatch_size)):
     kwargs = dict(metric='euclidean')
     cost_string = '  '.join('%s: %.4f' % o
                             for o in zip(disp_costs.keys(), costs))
-    print '%*d) %s' % (len('%d'%total_niter), epoch, cost_string)
+    print('%*d) %s' % (len('%d'%total_niter), epoch, cost_string))
     outs = OrderedDict()
     _feats = {}
     def _get_feats(f, x):
@@ -748,8 +748,8 @@ def eval_and_disp(epoch, costs, ng=(10 * megabatch_size)):
         def is_prop(key, prop_metrics=['NNC', 'CLS']):
             return any(key.startswith(m) for m in prop_metrics)
         return '%s: %.2f' + ('%%' if is_prop(key) else '')
-    print '  '.join(format_str(k) % (k, v)
-                    for k, v in outs.iteritems())
+    print('  '.join(format_str(k) % (k, v)
+                    for k, v in outs.iteritems()))
     samples = batch_map(_gen, sample_inputs, wraparound=True)
     sample_shape = num_sample_rows, num_sample_cols
     def imname(tag=None):
@@ -801,7 +801,7 @@ def load_params(weight_prefix=None, resume_epoch=None, groups=param_groups):
             raise ValueError(('different param list lengths: '
                               'len(saved)=%d != %d=len(params)')
                                % (len(saved_params), len(param_list)))
-        print 'Loading %d params from: %s' % (len(param_list), path)
+        print('Loading %d params from: %s' % (len(param_list), path))
         for saved, shared in zip(saved_params, param_list):
             if shared.get_value().shape != saved.shape:
                 raise ValueError(('shape mismatch: '
@@ -891,8 +891,8 @@ def train():
             train_batch(inputs, n_updates)
             n_updates += 1 + update_both
         epoch_time = time() - start_time
-        print 'Epoch %d: %f seconds (LR = %g)' \
-              % (epoch, epoch_time, lrt.get_value())
+        print('Epoch %d: %f seconds (LR = %g)' \
+              % (epoch, epoch_time, lrt.get_value()))
 
 if __name__ == '__main__':
     if (args.weights is not None) or (args.resume is not None):

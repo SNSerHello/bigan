@@ -140,8 +140,8 @@ class Layer(object):
                 outs[index] = Output(out.value, out_shape,
                                      index_max=out.index_max)
         self.output = tuple(outs)
-        print '(%s) Creating outputs with shapes: %s' % \
-            (self.name, ', '.join(str(o.shape) for o in self.output))
+        print('(%s) Creating outputs with shapes: %s' % \
+            (self.name, ', '.join(str(o.shape) for o in self.output)))
         if len(self.output) == 1:
             self.output = self.output[0]
 
@@ -157,7 +157,7 @@ class Layer(object):
                 nin_axis=None, exp_reparam=exp_reparam):
         if stddev is None:
             stddev = self.weight_init
-        print 'weights: initializing weights with stddev = %f' % stddev
+        print('weights: initializing weights with stddev = %f' % stddev)
         if stddev == 0:
             value = np.zeros(shape)
         else:
@@ -674,7 +674,7 @@ class Net(object):
         return self.deploy_updates.items()
 
     def add_loss(self, value, weight=1, name='loss'):
-        print 'Adding loss:', (self.name, weight, name)
+        print('Adding loss:', (self.name, weight, name))
         if value.ndim > 1:
             raise ValueError('value must be 0 or 1D (not %dD)' % value.ndim)
         if name not in self.is_agg_loss:
@@ -697,7 +697,7 @@ class Net(object):
                     self.loss[name] = value
 
     def add_agg_loss_term(self, term_name, weight=1, name='loss'):
-        print 'Adding agg loss:', (self.name, weight, name, term_name)
+        print('Adding agg loss:', (self.name, weight, name, term_name))
         if name not in self.is_agg_loss:
             self.is_agg_loss[name] = True
             self.agg_loss_terms[name] = []
@@ -736,11 +736,11 @@ class Net(object):
             if value.shape != existing_shape:
                 raise ValueError('Param "%s": incompatible shapes %s vs. %s' %
                                  (name, existing_shape, value.shape))
-            print '(%s) Reusing param "%s" with shape: %s' % \
-                (layer_name, name, value.shape)
+            print('(%s) Reusing param "%s" with shape: %s' % \
+                (layer_name, name, value.shape))
         else:
-            print '(%s) Adding param "%s" with shape: %s' % \
-                  (layer_name, name, value.shape)
+            print('(%s) Adding param "%s" with shape: %s' % \
+                  (layer_name, name, value.shape))
             param = sharedX(value, dtype=dtype, name=name)
         assert name not in self._params, 'param "%s already exists' % name
         self._params[name] = (param, bool(learnable))
@@ -1328,8 +1328,8 @@ def test_batch_norm(thresh=1e-8):
     thresh = 1e-6
     for i in xrange(dim):
         d, o = data[:, i], output[:, i]
-        print 'Input: (mean, std) = (%f, %f)' % (d.mean(), d.std())
-        print 'Output: (mean, std) = (%f, %f)' % (o.mean(), o.std())
+        print('Input: (mean, std) = (%f, %f)' % (d.mean(), d.std()))
+        print('Output: (mean, std) = (%f, %f)' % (o.mean(), o.std()))
         assert np.abs(o.mean()) < thresh
         assert np.abs(np.log(o.std())) < thresh
 
@@ -1345,8 +1345,8 @@ def test_batch_norm(thresh=1e-8):
     thresh = 1e-2
     for i in xrange(dim):
         d, o = data[:, i], output[:, i]
-        print 'Input: (mean, std) = (%f, %f)' % (d.mean(), d.std())
-        print 'Output: (mean, std) = (%f, %f)' % (o.mean(), o.std())
+        print('Input: (mean, std) = (%f, %f)' % (d.mean(), d.std()))
+        print('Output: (mean, std) = (%f, %f)' % (o.mean(), o.std()))
         assert np.abs(o.mean()) < thresh
         assert np.abs(np.log(o.std())) < thresh
 
@@ -1396,8 +1396,8 @@ def test_multifc(n=5, b=100, d_in=500, d_out=1000, n_trials=1000):
     f_b = theano.function(x_in, y_b.value)
     time_b = Timer(partial(f_b, *x_sample))
     # time them
-    print 'Time A:', time_a.timeit(number=n_trials)
-    print 'Time B:', time_b.timeit(number=n_trials)
+    print('Time A:', time_a.timeit(number=n_trials))
+    print('Time B:', time_b.timeit(number=n_trials))
 
 if __name__ == '__main__':
     test_multifc()
@@ -1405,9 +1405,9 @@ if __name__ == '__main__':
     test_batch_norm()
     images = Output(sharedX(np.zeros([128, 3, 28, 28])))
     D = min_convnet_28(images)[0]
-    print 'D shape =', D.shape
+    print('D shape =', D.shape)
     latents = Output(sharedX(np.zeros([128, 100])))
     G = min_deconvnet_28(latents)[0]
-    print 'G shape =', G.shape
+    print('G shape =', G.shape)
     birelu_G = L.BiReLU(G)
-    print 'birelu_G shape =', birelu_G.shape
+    print('birelu_G shape =', birelu_G.shape)

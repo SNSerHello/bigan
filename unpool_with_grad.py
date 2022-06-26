@@ -43,7 +43,7 @@ if __name__ == '__main__':
                          dtype=theano.config.floatX)
     rng = np.random.RandomState()
     theano.tensor.verify_grad(upsample_23, [x_input], rng=rng)
-    print 'Gradient check passed!'
+    print('Gradient check passed!')
 
     x = theano.tensor.tensor4()
     y = dnn_upsample_nearest(x, [2, 3])
@@ -58,4 +58,4 @@ if __name__ == '__main__':
           [17, 18, 19]]],
     ], dtype=theano.config.floatX)
     result = upsample2x(x_input)
-    print result
+    print(result)
