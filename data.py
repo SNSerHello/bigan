@@ -28,7 +28,7 @@ class DataProvider(object):
         total_num = num_batches * self.batch_size
         out_data = out_label = None
         index = 0
-        for _ in xrange(num_batches):
+        for _ in range(num_batches):
             out_batch = self.get_batch()
             if out_data is None:
                 bd, bl = out_batch
@@ -205,7 +205,7 @@ class ImageDataProvider(DataProvider):
         # self.out_data is a length K list of NxCxHxW ndarrays
         # prefetch_data is a length N list of length K lists of CxHxW ndarrays
         for index, r in enumerate(self.out_data):
-            for batch_index in xrange(r.shape[0]):
+            for batch_index in range(r.shape[0]):
                 r[batch_index, ...] = prefetch_data[batch_index][index]
         self.out_label[...] = self.labels
         self.start_prefetch()

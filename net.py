@@ -87,7 +87,7 @@ def reparameterized_weights(w, g, epsilon=1e-8, nin_axis=None, exp=exp_reparam):
     norm = T.sqrt(T.sqr(w).sum(axis=nin_axis, keepdims=True) + epsilon)
     if exp:
         g = T.exp(g)
-    g_axes = list(reversed(xrange(g.ndim)))
+    g_axes = list(reversed(range(g.ndim)))
     dimshuffle_pattern = [
         "x" if (axis in nin_axis) else g_axes.pop() for axis in range(w.ndim)
     ]
@@ -252,7 +252,7 @@ class Concat(Layer):
         index_max = set(hi.index_max for hi in h)
         assert len(index_max) == 1
         index_max = index_max.pop()
-        for i in xrange(num_axes):
+        for i in range(num_axes):
             if i == axis:
                 continue
             dims = set(hi.shape[i] for hi in h)
@@ -285,7 +285,7 @@ class Slice(Layer):
                 assert (
                     num * size == in_dim
                 ), "Slice: num(=%d) must evenly divide in_dim=(%d)" % (num, in_dim)
-            slice_point = [i * size for i in xrange(1, num)]
+            slice_point = [i * size for i in range(1, num)]
         if len(slice_point) == 0:
             return Output(h.value, index_max=h.index_max)
         slices = [
@@ -351,7 +351,7 @@ class Conv(Layer):
         pad = get_pad(pad, ksize)
         subsample = stride, stride
         outs = []
-        for g in xrange(group):
+        for g in range(group):
             if group > 1:
                 size = nout // group
                 w = W[g * size : (g + 1) * size]
@@ -1182,7 +1182,7 @@ def deconvnet_64(
     h = deconv_acts(h, nout=(size * 1, ss * 8, ss * 8), stride=2)
     curnout = (nout if num_refine == 0 else size // 2, ss * 16, ss * 16)
     h = deconv_op(h, nout=curnout, ksize=ksize, stride=2)
-    for i in xrange(num_refine):
+    for i in range(num_refine):
         h = acts(h, ksize=k)
         is_last = i == num_refine - 1
         curnout = nout if is_last else (size // 2)
@@ -1288,7 +1288,7 @@ def deconvnet_128(
     if False:  # ignore this stuff for now...
         curnout = nout if (num_refine == 0) else (size // 2, ss * 32, ss * 32)
         h = N.Deconv(h, nout=curnout, ksize=k, stride=2)
-        for i in xrange(num_refine):
+        for i in range(num_refine):
             h = acts(h, ksize=k)
             is_last = i == num_refine - 1
             curnout = nout if is_last else (size // 2)
@@ -1385,7 +1385,7 @@ def deepsimgen_deconvnet_128(
     h = N.Deconv(
         h, nout=(curnout, 32 * ss, 32 * ss), stride=2, ksize=4
     )  # uconv5 -> (  3, 128, 128)
-    for i in xrange(num_refine):
+    for i in range(num_refine):
         h = acts(h, ksize=k)
         is_last = i == num_refine - 1
         curnout = nout if is_last else (size // 2)
@@ -1608,7 +1608,7 @@ def convnet(
         for h in h_parts:
             diff_sum = None
             hv = h.value
-            for offset in xrange(1, D + 1):
+            for offset in range(1, D + 1):
                 hoff = T.concatenate([hv[offset:], hv[:offset]], axis=0)
                 diff = abs(hv - hoff).sum(axis=2)  # -> N x B (summed over C)
                 diff = T.exp(-diff)
@@ -1660,10 +1660,10 @@ def test_batch_norm(thresh=1e-8):
     znormed = N.BatchNorm(z)
     f = theano.function([z.value], znormed.value, updates=N.deploy_updates.items())
 
-    outputs = [f(data[i : (i + b)]) for i in xrange(0, n, b)]
+    outputs = [f(data[i : (i + b)]) for i in range(0, n, b)]
     output = np.concatenate(outputs, axis=0)
     thresh = 1e-6
-    for i in xrange(dim):
+    for i in range(dim):
         d, o = data[:, i], output[:, i]
         print("Input: (mean, std) = (%f, %f)" % (d.mean(), d.std()))
         print("Output: (mean, std) = (%f, %f)" % (o.mean(), o.std()))
@@ -1675,12 +1675,12 @@ def test_batch_norm(thresh=1e-8):
     znormedtest = N2.BatchNorm(ztest, use_ave=True)
     ftest = theano.function([ztest.value], znormedtest.value)
     # check that batching of inputs doesn't matter with use_ave=True
-    output_batches = [ftest(data[i : (i + b)]) for i in xrange(0, n, b)]
+    output_batches = [ftest(data[i : (i + b)]) for i in range(0, n, b)]
     outputs = np.concatenate(output_batches, axis=0)
     output = ftest(data)
     assert np.all(outputs == output)
     thresh = 1e-2
-    for i in xrange(dim):
+    for i in range(dim):
         d, o = data[:, i], output[:, i]
         print("Input: (mean, std) = (%f, %f)" % (d.mean(), d.std()))
         print("Output: (mean, std) = (%f, %f)" % (o.mean(), o.std()))
@@ -1718,7 +1718,7 @@ def test_dropout():
 
 
 def test_multifc(n=5, b=100, d_in=500, d_out=1000, n_trials=1000):
-    x = [Output(T.matrix(), shape=(b, d_in)) for _ in xrange(n)]
+    x = [Output(T.matrix(), shape=(b, d_in)) for _ in range(n)]
     x_in = [xi.value for xi in x]
     x_sample = [np.asarray(np.random.rand(*xi.shape), dtype=xi.value.dtype) for xi in x]
     # method A: concat then multiply

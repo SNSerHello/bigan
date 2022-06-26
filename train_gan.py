@@ -801,7 +801,7 @@ def batch_map(f, X, nbatch=args.batch_size, wraparound=False):
         assert len(x) == n
     out = None
     f_returns_ndarray = None
-    for start in xrange(0, n, nbatch):
+    for start in range(0, n, nbatch):
         end = min(start + nbatch, n)
         inputs = [x[start:end] for x in X]
         if wraparound:
@@ -856,10 +856,10 @@ print("Getting samples")
 grid_shape = ny, dataset.num_vis_samples
 tr_idxs = np.arange(len(trY))
 sample_inds = [
-    py_rng.sample(tr_idxs[trY == y], dataset.num_vis_samples) for y in xrange(ny)
+    py_rng.sample(tr_idxs[trY == y], dataset.num_vis_samples) for y in range(ny)
 ]
 trXVisRaw = np.asarray(
-    [[trXImages[i] for i in sample_inds[y]] for y in xrange(ny)]
+    [[trXImages[i] for i in sample_inds[y]] for y in range(ny)]
 ).reshape(-1, nc, args.crop_resize, args.crop_resize)
 trXVis = inverse_transform(transform(trXVisRaw))
 dataset.grid_vis(trXVis, grid_shape, "%s/real.png" % (samples_dir,))
@@ -867,7 +867,7 @@ if args.crop_size == args.crop_resize:
     trXBigVisRaw = trXVisRaw
 else:
     trXBigVisRaw = np.asarray(
-        [[trXBigImages[i] for i in sample_inds[y]] for y in xrange(ny)]
+        [[trXBigImages[i] for i in sample_inds[y]] for y in range(ny)]
     ).reshape(-1, nc, crop, crop)
     trXBigVis = inverse_transform(transform(trXBigVisRaw, crop=crop), crop=crop)
     dataset.grid_vis(trXBigVis, grid_shape, "%s/real_big.png" % (samples_dir,))
@@ -1108,7 +1108,7 @@ def deploy():
     start_time = time()
     sys.stdout.write("Running %d deploy update iterations..." % args.deploy_iters)
     costs = np.mean(
-        [_deploy_update(*get_batch(deploy=True)) for _ in xrange(args.deploy_iters)],
+        [_deploy_update(*get_batch(deploy=True)) for _ in range(args.deploy_iters)],
         axis=0,
     )
     deploy_time = time() - start_time
@@ -1123,7 +1123,7 @@ def train():
     disp_epochs = frozenset(list(save_epochs) + ([] if args.no_disp_one else [1]))
     if args.disp_interval is None:
         args.disp_interval = total_niter + 1
-    for epoch in xrange(start_epoch, total_niter + 1):
+    for epoch in range(start_epoch, total_niter + 1):
         do_eval = (epoch % args.disp_interval == 0) or (epoch in disp_epochs)
         do_save = (epoch in save_epochs) or (
             (args.save_interval is not None)
@@ -1142,7 +1142,7 @@ def train():
             break
         set_lr(epoch)
         start_time = time()
-        for index in xrange(iters_per_epoch):
+        for index in range(iters_per_epoch):
             inputs = get_batch()
             train_batch(inputs, n_updates)
             n_updates += 1 + update_both
