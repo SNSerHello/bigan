@@ -21,10 +21,13 @@ Please consider citing Adversarial Feature Learning if you use this code in your
 Create a directory `./data/mnist` under the root of this repository.
 This directory should contain the MNIST data files (or symlinks to them) with these names:
 
-    t10k-images.idx3-ubyte
-    t10k-labels.idx1-ubyte
-    train-images.idx3-ubyte
-    train-labels.idx1-ubyte
+    $ mkdir -p ./data/mnist
+    $ cd ./data/mnist
+    $ wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+    $ wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+    $ wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+    $ wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+    $ gunzip t10k-images-idx3-ubyte.gz t10k-labels-idx1-ubyte.gz train-images-idx3-ubyte.gz train-labels-idx1-ubyte.gz
 
 The `train_mnist.sh` script trains a "permutation-invariant" BiGAN (by default) on the MNIST dataset.
 MNIST training takes about 30 minutes on a Titan X GPU (400 epochs at ~3.3 seconds per epoch).
@@ -220,7 +223,7 @@ You can test that the weights work by "resuming" training at epoch 100 with the 
     ./train_imagenet.sh --exp_dir ./exp/imagenet_1000_size72_u-200_bigan \
         --max_labels 1000 --epochs 50 --decay_epochs 50 --disp_interval 1 \
         --resume 100
-
+    
     # generalized BiGAN
     ./train_imagenet_highres_encoder.sh --exp_dir ./exp/imagenet_1000_size128_resize64_u-200_bigan \
         --max_labels 1000 --epochs 50 --decay_epochs 50 --disp_interval 1 \
@@ -237,7 +240,7 @@ This should perform a single evaluation and display roughly the following output
     100) JD: 0.0003  E: 10.0109  G: 10.0109
     NND/100: 48.05  NND/10: 44.93  NND: 42.61  NNC_e: 2.30%  NNC_e-: 3.78%  CLS_e-: 9.39%  EGr: 64.98  EGr_b: 82.64  EGg: 63.28  EGg_b: 84.10
     Eval done. (144.725810 seconds)
-
+    
     # generalized BiGAN
     [...]
     Loading 26 params from: ./exp/imagenet_1000_size128_resize64_u-200_bigan/models/100_encode_params.jl
