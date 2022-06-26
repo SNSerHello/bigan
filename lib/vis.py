@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.misc import imsave
+from imageio import imsave
 
 
 def grayscale_grid_vis(X, grid_shape, save_path=None):
