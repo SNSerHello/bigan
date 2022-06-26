@@ -7,7 +7,7 @@ def grayscale_grid_vis(X, grid_shape, save_path=None):
     h, w = X[0].shape[:2]
     img = np.zeros((h * nh, w * nw))
     for n, x in enumerate(X):
-        j = n / nw
+        j = n // nw
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w] = x
     if save_path is not None:
@@ -20,7 +20,7 @@ def color_grid_vis(X, grid_shape, save_path=None):
     h, w = X[0].shape[:2]
     img = np.zeros((h * nh, w * nw, 3))
     for n, x in enumerate(X):
-        j = n / nw
+        j = n // nw
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w, :] = x
     if save_path is not None:
@@ -33,7 +33,7 @@ def rgba_grid_vis(X, grid_shape, save_path=None):
     h, w = X[0].shape[:2]
     img = np.zeros((h * nh, w * nw, 4))
     for n, x in enumerate(X):
-        j = n / nw
+        j = n // nw
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w, :] = x
     if save_path is not None:
