@@ -701,9 +701,13 @@ deploy_label = args.classifier and args.classifier_deploy
 X_discrim_input = [Xis]
 X_enc_input = [Xi]
 
+tmp_list = []
 for k, v in disp_costs.items():
     if isinstance(v, (int, float, type(None))):
-        del disp_costs[k]
+        tmp_list.append(k)
+for k in tmp_list:
+    del disp_costs[k]
+del tmp_list
 
 set_mode("test")
 if f_discrim is not None:
