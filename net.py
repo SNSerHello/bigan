@@ -782,7 +782,7 @@ class Net(object):
             checked_update(self.updates, k)
 
     def get_updates(self, updater=None, loss="loss", extra_params=[]):
-        updates = self.updates.items()
+        updates = [(k, v) for k, v in self.updates.items()]
         if updater is not None:
             try:
                 loss_value = self.get_loss(loss).mean()
