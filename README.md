@@ -35,8 +35,7 @@ MNIST training takes about 30 minutes on a Titan X GPU (400 epochs at ~3.3 secon
 ### BiGAN
 The BiGAN discriminator (or "joint discriminator") is enabled by setting a non-zero `joint_discrim_weight`.
 
-    OBJECTIVE="--encode_gen_weight 1 --encode_weight 0 --discrim_weight 0 --joint_discrim_weight 1"
-    ./train_mnist.sh $OBJECTIVE --exp_dir ./exp/perminv_mnist_u-50_bigan
+    OBJECTIVE="--encode_gen_weight 1 --encode_weight 0 --discrim_weight 0 --joint_discrim_weight 1" ./train_mnist.sh $OBJECTIVE --exp_dir ./exp/perminv_mnist_u-50_bigan
 
 This should produce output like:
 
