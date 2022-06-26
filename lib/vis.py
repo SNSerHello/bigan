@@ -11,7 +11,7 @@ def grayscale_grid_vis(X, grid_shape, save_path=None):
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w] = x
     if save_path is not None:
-        imsave(save_path, img)
+        imsave(save_path, (img * 255).clip(0, 255).astype(np.uint8))
     return img
 
 
@@ -24,7 +24,7 @@ def color_grid_vis(X, grid_shape, save_path=None):
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w, :] = x
     if save_path is not None:
-        imsave(save_path, img)
+        imsave(save_path, (img * 255).clip(0, 255).astype(np.uint8))
     return img
 
 
@@ -37,7 +37,7 @@ def rgba_grid_vis(X, grid_shape, save_path=None):
         i = n % nw
         img[j * h : j * h + h, i * w : i * w + w, :] = x
     if save_path is not None:
-        imsave(save_path, img)
+        imsave(save_path, (img * 255).clip(0, 255).astype(np.uint8))
     return img
 
 
