@@ -856,7 +856,7 @@ print("Getting samples")
 grid_shape = ny, dataset.num_vis_samples
 tr_idxs = np.arange(len(trY))
 sample_inds = [
-    py_rng.sample(tr_idxs[trY == y], dataset.num_vis_samples) for y in range(ny)
+    py_rng.sample(set(tr_idxs[trY == y]), dataset.num_vis_samples) for y in range(ny)
 ]
 trXVisRaw = np.asarray(
     [[trXImages[i] for i in sample_inds[y]] for y in range(ny)]
