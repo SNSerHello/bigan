@@ -690,7 +690,7 @@ class BiReLU(Layer):
 class L(object):
     layers = {
         k: v
-        for k, v in globals().iteritems()
+        for k, v in globals().items()
         if isinstance(v, type) and issubclass(v, Layer)
     }
 
@@ -711,7 +711,7 @@ def checked_update(target_map, source={}, **new_kwargs):
 
     Returns None, updating target_map in-place.
     """
-    for k, v in itertools.chain(source.iteritems(), new_kwargs.iteritems()):
+    for k, v in itertools.chain(source.items(), new_kwargs.items()):
         if k in target_map:
             raise ValueError("checked_update: key exists: %s" % k)
         target_map[k] = v
@@ -720,7 +720,7 @@ def checked_update(target_map, source={}, **new_kwargs):
 class Net(object):
     layer_types = {
         k: v
-        for k, v in globals().iteritems()
+        for k, v in globals().items()
         if isinstance(v, type) and issubclass(v, Layer)
     }
 
@@ -767,7 +767,7 @@ class Net(object):
         return [p for p, l in self._params.itervalues() if l]
 
     def learnable_keys(self):
-        return [k for k, (_, l) in self._params.iteritems() if l]
+        return [k for k, (_, l) in self._params.items() if l]
 
     def add_deploy_updates(self, *args, **kwargs):
         for k in (dict(args), kwargs):

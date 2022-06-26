@@ -701,7 +701,7 @@ deploy_label = args.classifier and args.classifier_deploy
 X_discrim_input = [Xis]
 X_enc_input = [Xi]
 
-for k, v in disp_costs.iteritems():
+for k, v in disp_costs.items():
     if isinstance(v, (int, float, type(None))):
         del disp_costs[k]
 
@@ -977,7 +977,7 @@ def eval_and_disp(epoch, costs, ng=(10 * megabatch_size)):
 
         return "%s: %.2f" + ("%%" if is_prop(key) else "")
 
-    print("  ".join(format_str(k) % (k, v) for k, v in outs.iteritems()))
+    print("  ".join(format_str(k) % (k, v) for k, v in outs.items()))
     samples = batch_map(_gen, sample_inputs, wraparound=True)
     sample_shape = num_sample_rows, num_sample_cols
 
@@ -1014,7 +1014,7 @@ param_groups = dict(
 
 
 def save_params(epoch, groups=param_groups):
-    for key, param_list in groups.iteritems():
+    for key, param_list in groups.items():
         if len(param_list) == 0:
             continue
         path = "%s/%d_%s_params.jl" % (model_dir, epoch, key)
@@ -1026,7 +1026,7 @@ def load_params(weight_prefix=None, resume_epoch=None, groups=param_groups):
         assert weight_prefix is None
         weight_prefix = "%s/%d" % (model_dir, resume_epoch)
     assert weight_prefix is not None
-    for key, param_list in groups.iteritems():
+    for key, param_list in groups.items():
         if len(param_list) == 0:
             continue
         path = "%s_%s_params.jl" % (weight_prefix, key)
