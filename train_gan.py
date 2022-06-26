@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import os
 import joblib
+import json
 from time import time
 
 import theano
@@ -375,7 +376,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-print("Args: %s" % args)
+print("Args: %s" % json.dumps(vars(args), indent=4))
 
 args.net_fc_dims = [int(d) for d in args.net_fc_dims.split(",") if d]
 if args.encode_net_fc_dims is not None:
