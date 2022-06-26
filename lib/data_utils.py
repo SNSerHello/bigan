@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn import utils as skutils
 
-from rng import np_rng, py_rng
+from .rng import np_rng, py_rng
 
 
 def center_crop(x, ph, pw=None):

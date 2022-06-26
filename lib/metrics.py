@@ -5,7 +5,7 @@ import theano.tensor as T
 import gc
 import time
 
-from theano_utils import floatX
+from .theano_utils import floatX
 
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression as LR
