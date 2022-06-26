@@ -32,7 +32,7 @@ def list_shuffle(*data):
 
 
 def shuffle(*arrays, **options):
-    if isinstance(arrays[0][0], basestring):
+    if isinstance(arrays[0][0], str):
         return list_shuffle(*arrays)
     else:
         return skutils.shuffle(*arrays, random_state=np_rng)
