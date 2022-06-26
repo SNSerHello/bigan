@@ -42,12 +42,12 @@ export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/home/jdonahue/cudnn3/cuda/lib64:/o
 
 if [ ! -e "${CAFFEMODEL_PATH}" ]; then
     cd ${CAFFE_DIR}
-    python ${CWD}/export_params.py ${MODEL_DEF} ${MODEL_PATH} ${CAFFEMODEL_PATH}
+    python3 ${CWD}/export_params.py ${MODEL_DEF} ${MODEL_PATH} ${CAFFEMODEL_PATH}
 fi
 
 if [ ! -e "${REINIT_CAFFEMODEL_PATH}" ]; then
     cd ${CAFFE_DIR}
-    python ${MAGIC_DIR}/magic_init.py -l ${CAFFEMODEL_PATH} --zero_from ${REINIT_LAYER} --post_zero_from fc8 -cs --gpu ${GPU} -t kmeans ${MODEL_DEF} ${REINIT_CAFFEMODEL_PATH}
+    python3 ${MAGIC_DIR}/magic_init.py -l ${CAFFEMODEL_PATH} --zero_from ${REINIT_LAYER} --post_zero_from fc8 -cs --gpu ${GPU} -t kmeans ${MODEL_DEF} ${REINIT_CAFFEMODEL_PATH}
 fi
 
 OUTPUT_DIR=$(mktemp -d)
@@ -64,6 +64,6 @@ else
 fi
 MEAN_ARG="--mean_value ${MEAN}"
 SCALE_ARG="--scale ${SCALE}"
-python src/train_cls.py ${MODEL_DEF} ${REINIT_CAFFEMODEL_PATH} ${MEAN_ARG} ${SCALE_ARG} --output-dir ${OUTPUT_DIR} --train-from ${TRAIN_FROM} --gpu ${GPU} ${RESIZE_ARG}
+python3 src/train_cls.py ${MODEL_DEF} ${REINIT_CAFFEMODEL_PATH} ${MEAN_ARG} ${SCALE_ARG} --output-dir ${OUTPUT_DIR} --train-from ${TRAIN_FROM} --gpu ${GPU} ${RESIZE_ARG}
 
 cd ${CWD}
